@@ -1,0 +1,48 @@
+
+  - apiVersion: argoproj.io/v1alpha1
+    kind: ApplicationSet
+    metadata:
+      name: team-example-envs
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: team-example
+    spec:
+      generators:
+        - list:
+            elements:
+              - project: team-example
+                env: dev
+                namespace: team-example-dev
+              - project: team-example
+                env: qa
+                namespace: team-example-qa
+              - project: team-example
+                env: stg
+                namespace: team-example-stg
+      template:
+        metadata:
+          name: "{{project}}-{{env}}"
+          namespace: argocd
+          labels:
+            platform.argocd.io/domain: "{{project}}"
+            platform.argocd.io/env: "{{env}}"
+        spec:
+          project: "{{project}}"
+          destination:
+            namespace: "{{namespace}}"
+            server: https://kubernetes.default.svc
+          source:
+            repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
+            targetRevision: HEAD
+            path: clusters/rke2-dev-cluster1/resources/apps/{{project}}
+            directory:
+              recurse: true
+          syncPolicy:
+            automated:
+              prune: true
+              selfHeal: true
+            syncOptions:
+              - CreateNamespace=true
+              - ApplyOutOfSyncOnly=true
+
+

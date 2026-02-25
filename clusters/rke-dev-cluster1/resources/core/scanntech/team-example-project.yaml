@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: team-example
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    platform.argocd.io/domain: team-example
+spec:
+  description: Dominio team-example
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  # Namespaces a los que puede desplegar este dominio.
+  destinations:
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+    - namespace: team-example-dev
+      server: https://kubernetes.default.svc
+    - namespace: team-example-qa
+      server: https://kubernetes.default.svc
+    - namespace: team-example-stg
+      server: https://kubernetes.default.svc
+  # Recursos namespaced mínimos que puede gestionar el dominio.
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  namespaceResourceBlacklist:
+    - group: ""
+      kind: NetworkPolicy
+  sourceRepos:
+    - "https://github.com/scanntech-dev/*"

@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rke2-dev-cluster1-root
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/managed-by: rke2-dev-cluster1-root
+    platform.argocd.io/cluster: rke2-dev-cluster1
+    app.kubernetes.io/name: cluster-root
+    app.kubernetes.io/part-of: platform-gitops
+spec:
+  project: platform-gitops
+  source:
+    # Reemplaza scanntech-dev y <repo> con el repo GitOps real de plataforma en GitHub.
+    repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
+    targetRevision: HEAD
+    path: clusters/rke2-dev-cluster1/resources/core
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /status
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - RespectIgnoreDifferences=true
+
+
