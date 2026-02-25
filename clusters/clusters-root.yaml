@@ -22,7 +22,7 @@ spec:
       source:
         repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
         targetRevision: HEAD
-        path: "{{path}}/resources"
+        path: "{{path}}"
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd
