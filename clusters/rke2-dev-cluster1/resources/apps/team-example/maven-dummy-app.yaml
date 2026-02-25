@@ -34,7 +34,7 @@ spec:
         namespace: "{{namespace}}"
         server: https://kubernetes.default.svc
       source:
-        repoURL: https://github.com/mtsdlf/moneytree-gitops.git
+        repoURL: git@github.com:mtsdlf/moneytree-gitops.git
         targetRevision: main
         path: "{{env}}"
       syncPolicy:

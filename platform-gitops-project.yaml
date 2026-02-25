@@ -18,7 +18,7 @@ spec:
   # Restringido a la organización de GitHub de GitOps de plataforma.
   sourceRepos:
     # Reemplaza scanntech-dev con la organización real de GitHub.
-    - "https://github.com/scanntech-dev/*"
+    - "git@github.com:mtsdlf/*"
   # Permite desplegar en cualquier namespace del cluster controlado por ArgoCD.
   destinations:
     - namespace: "*"

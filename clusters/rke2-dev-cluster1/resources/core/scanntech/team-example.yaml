@@ -34,7 +34,7 @@ items:
         - group: ""
           kind: NetworkPolicy
       sourceRepos:
-        - "https://github.com/scanntech-dev/*"
+        - "git@github.com:mtsdlf/*"
 
   - apiVersion: argoproj.io/v1alpha1
     kind: ApplicationSet
@@ -69,7 +69,7 @@ items:
             namespace: "{{namespace}}"
             server: https://kubernetes.default.svc
           source:
-            repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
+            repoURL: git@github.com:mtsdlf/argo-test.git
             targetRevision: HEAD
             path: clusters/rke-dev-cluster1/resources/apps/{{project}}
             directory:
