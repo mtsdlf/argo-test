@@ -8,7 +8,7 @@ metadata:
   name: platform-gitops
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io/platform-gitops
   labels:
     platform.argocd.io/domain: platform
     platform.argocd.io/area: gitops

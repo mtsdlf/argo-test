@@ -8,7 +8,7 @@ items:
       name: team-example
       namespace: argocd
       finalizers:
-        - resources-finalizer.argocd.argoproj.io
+        - resources-finalizer.argocd.argoproj.io/team-example
       labels:
         platform.argocd.io/domain: team-example
     spec:
