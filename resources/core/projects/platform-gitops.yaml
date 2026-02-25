@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  # Proyecto de plataforma que agrupa:
+  # - Root apps de clusters
+  # - Recursos de RBAC de ArgoCD
+  # - Configuración de repositorios de GitOps
+  name: platform-gitops
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    platform.argocd.io/domain: platform
+    platform.argocd.io/area: gitops
+spec:
+  description: Plataforma de GitOps y ArgoCD
+  # Repositorios desde los cuales se pueden obtener manifests.
+  # Restringido a la organización de GitHub de GitOps de plataforma.
+  sourceRepos:
+    # Reemplaza scanntech-dev con la organización real de GitHub.
+    - "https://github.com/scanntech-dev/*"
+  # Permite desplegar en cualquier namespace del cluster controlado por ArgoCD.
+  destinations:
+    - namespace: "*"
+      server: https://kubernetes.default.svc
+  # Recursos cluster-scoped mínimos requeridos para plataforma.
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  # Recursos namespaced que puede crear la plataforma.
+  namespaceResourceWhitelist:
+    - group: argoproj.io
+      kind: Application
+    - group: argoproj.io
+      kind: AppProject
+    - group: argoproj.io
+      kind: ApplicationSet
+    - group: ""
+      kind: Secret
+    - group: ""
+      kind: ServiceAccount
+    - group: rbac.authorization.k8s.io
+      kind: Role
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+
+

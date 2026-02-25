@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: maven-dummy-app-demo-apps
+  namespace: argocd
+  labels:
+    platform.argocd.io/domain: demo-apps
+    platform.argocd.io/service: maven-dummy-app
+    app.kubernetes.io/name: maven-dummy-app-gitops
+    app.kubernetes.io/part-of: demo-apps
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            namespace: demo-apps-dev
+          - env: qa
+            namespace: demo-apps-qa
+          - env: stg
+            namespace: demo-apps-stg
+  template:
+    metadata:
+      name: maven-dummy-app-{{env}}
+      namespace: argocd
+      labels:
+        platform.argocd.io/domain: demo-apps
+        platform.argocd.io/env: "{{env}}"
+        platform.argocd.io/service: maven-dummy-app
+      annotations:
+        argocd.argoproj.io/sync-wave: "10"
+    spec:
+      project: demo-apps
+      destination:
+        namespace: "{{namespace}}"
+        server: https://kubernetes.default.svc
+      source:
+        repoURL: https://github.com/scanntech-dev/gitops-dxchat.git
+        targetRevision: main
+        path: "{{env}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+
+

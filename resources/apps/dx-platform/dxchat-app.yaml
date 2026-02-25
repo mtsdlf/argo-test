@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: dxchat-app-dx-platform
+  namespace: argocd
+  labels:
+    platform.argocd.io/domain: dx-platform
+    platform.argocd.io/service: dxchat-app
+    app.kubernetes.io/name: dxchat-app-gitops
+    app.kubernetes.io/part-of: dx-platform
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            namespace: dx-platform-dev
+          - env: qa
+            namespace: dx-platform-qa
+          - env: stg
+            namespace: dx-platform-stg
+  template:
+    metadata:
+      name: dxchat-app-{{env}}
+      namespace: argocd
+      labels:
+        platform.argocd.io/domain: dx-platform
+        platform.argocd.io/env: "{{env}}"
+        platform.argocd.io/service: dxchat-app
+      annotations:
+        argocd.argoproj.io/sync-wave: "10"
+    spec:
+      project: dx-platform
+      destination:
+        namespace: "{{namespace}}"
+        server: https://kubernetes.default.svc
+      source:
+        repoURL: https://github.com/scanntech-dev/gitops-dxchat.git
+        targetRevision: main
+        path: "{{env}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+
+

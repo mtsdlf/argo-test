@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+  - apiVersion: argoproj.io/v1alpha1
+    kind: AppProject
+    metadata:
+      name: demo-apps
+      namespace: argocd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+      labels:
+        platform.argocd.io/domain: demo-apps
+    spec:
+      description: Dominio demo-apps (multi-ambientes)
+      clusterResourceWhitelist:
+        - group: ""
+          kind: Namespace
+      # Namespaces a los que puede desplegar este dominio.
+      destinations:
+        - namespace: argocd
+          server: https://kubernetes.default.svc
+        - namespace: demo-apps-dev
+          server: https://kubernetes.default.svc
+        - namespace: demo-apps-qa
+          server: https://kubernetes.default.svc
+        - namespace: demo-apps-stg
+          server: https://kubernetes.default.svc
+      # Recursos namespaced mínimos que puede gestionar el dominio.
+      namespaceResourceWhitelist:
+        - group: "*"
+          kind: "*"
+      namespaceResourceBlacklist:
+        - group: ""
+          kind: NetworkPolicy
+      sourceRepos:
+        - "https://github.com/scanntech-dev/*"
+
+  - apiVersion: argoproj.io/v1alpha1
+    kind: ApplicationSet
+    metadata:
+      name: demo-apps-envs
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: demo-apps
+    spec:
+      generators:
+        - list:
+            elements:
+              - project: demo-apps
+                env: dev
+                namespace: demo-apps-dev
+              - project: demo-apps
+                env: qa
+                namespace: demo-apps-qa
+              - project: demo-apps
+                env: stg
+                namespace: demo-apps-stg
+      template:
+        metadata:
+          name: "{{project}}-{{env}}"
+          namespace: argocd
+          labels:
+            platform.argocd.io/domain: "{{project}}"
+            platform.argocd.io/env: "{{env}}"
+        spec:
+          project: "{{project}}"
+          destination:
+            namespace: "{{namespace}}"
+            server: https://kubernetes.default.svc
+          source:
+            repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
+            targetRevision: HEAD
+            path: clusters/k8-dev01/resources/apps/{{project}}
+            directory:
+              recurse: true
+          syncPolicy:
+            automated:
+              prune: true
+              selfHeal: true
+            syncOptions:
+              - CreateNamespace=true
+              - ApplyOutOfSyncOnly=true
+
+
