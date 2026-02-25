@@ -1,37 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
+kind: Application
 metadata:
   name: clusters-root
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/clusters-root
 spec:
-  generators:
-    - git:
-        # Repositorio GitOps de plataforma en GitHub.
-        repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
-        revision: HEAD
-        directories:
-          - path: clusters/*
-  template:
-    metadata:
-      name: "{{path.basename}}-root"
-      namespace: argocd
-      labels:
-        platform.argocd.io/cluster: "{{path.basename}}"
-    spec:
-      project: clusters
-      source:
-        repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
-        targetRevision: HEAD
-        path: "{{path}}"
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: argocd
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
-          - ApplyOutOfSyncOnly=true
+  project: platform-gitops
+  source:
+    repoURL: git@github.com:mtsdlf/argo-test.git
+    targetRevision: HEAD
+    path: clusters
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - RespectIgnoreDifferences=true
 
 
