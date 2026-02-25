@@ -7,7 +7,6 @@ spec:
   generators:
     - git:
         # Repositorio GitOps de plataforma en GitHub.
-        # Reemplaza scanntech-dev y <repo> con los valores reales.
         repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
         revision: HEAD
         directories:
@@ -24,8 +23,6 @@ spec:
         repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
         targetRevision: HEAD
         path: "{{path}}/resources"
-        directory:
-          recurse: true
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd
