@@ -71,7 +71,7 @@ items:
           source:
             repoURL: git@github.com:mtsdlf/argo-test.git
             targetRevision: HEAD
-            path: clusters/rke-dev-cluster1/resources/apps/{{project}}
+            path: clusters/rke2-dev-cluster1/resources/apps/{{project}}
             directory:
               recurse: true
           syncPolicy:
