@@ -18,7 +18,7 @@ spec:
       labels:
         platform.argocd.io/cluster: "{{path.basename}}"
     spec:
-      project: platform-gitops
+      project: clusters
       source:
         repoURL: https://github.com/scanntech-dev/argocd-demo-repo.git
         targetRevision: HEAD
