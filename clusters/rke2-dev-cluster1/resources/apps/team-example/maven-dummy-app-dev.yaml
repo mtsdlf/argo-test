@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: maven-dummy-app-dev
+  namespace: argocd
+spec:
+  project: team-example
+  destination:
+    namespace: team-example-dev
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: git@github.com:mtsdlf/moneytree-gitops.git
+    targetRevision: main
+    path: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
